@@ -1,10 +1,44 @@
-[build-system]
-requires = [
+[project]
+name = "openrlhf"
+version = "0.0.1"
+requires-python = ">=3.10,<3.13"
+authors = [{name = "OpenRLHF Team"}]
+dependencies = [
+    "accelerate",
+    "bitsandbytes",
+    "datasets",
+    "deepspeed==0.17.5",
+    "einops",
+    "flash-attn",
+    "grpcio>=1.74.0",
+    "isort",
+    "jsonlines",
+    "loralib",
+    "optimum",
+    "optree>=0.13.0",
     "packaging",
-    "setuptools >= 49.4.0",
+    "peft",
+    "pynvml>=12.0.0",
+    "ray[default]==2.48.0",
+    "tensorboard",
+    "torch",
+    "torchdata",
+    "torchmetrics",
+    "tqdm",
+    "transformers==4.55.2",
+    "transformers-stream-generator",
+    "wandb",
     "wheel",
 ]
-build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+vllm_latest = ["vllm>0.10.1"]
+ring = ["ring_flash_attn"]
+liger = ["liger_kernel"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.isort]
 profile = "black"  # black-compatible
@@ -54,3 +88,6 @@ markers = [
     "skipduringci: marks tests that are skipped ci as they are addressed by Jenkins jobs but should be run to test user setups",
     "pleasefixme: marks tests that are broken and need fixing",
 ]
+
+[tool.uv.sources]
+flash-attn = { path = "flash_attn-2.8.3+cu12torch2.7cxx11abiFALSE-cp312-cp312-linux_x86_64.whl" }

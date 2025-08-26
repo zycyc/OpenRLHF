@@ -42,7 +42,17 @@ OpenRLHF is the first easy-to-use, high-performance open-source RLHF framework b
 
 More details are in [Slides](https://docs.google.com/presentation/d/1JRhB1d7csofx0PIZBmfyBdMluxNd5JLPpUHrrvVhGnk/edit?usp=sharing) | [Technical Report](https://www.researchgate.net/publication/393414548_OpenRLHF_An_Easy-to-use_Scalable_and_High-performance_RLHF_Framework) | [Documents](https://openrlhf.readthedocs.io/)
 
+## UV instructions
+
+```bash
+uv venv
+uv sync --extra vllm_latest --extra ring --extra liger --no-build-isolation
+```
+
+need --no-build-isolation for flash-attn so that its installation includes torch.
+
 ## News
+
 - [2025/8] [ProRL V2](https://hijkzzz.notion.site/prorl-v2) uses REINFORCE++-baseline to train a state-of-the-art 1.5B reasoning model and releases the blog post [REINFORCE++-baseline is all you need in RLVR](https://medium.com/@janhu9527/reinforce-baseline-is-all-you-need-in-rlvr-f5406930aa85).
 - [2025/6] [Magistral](https://mistral.ai/static/research/magistral.pdf) uses the method quite similar to REINFORCE++-baseline to train the reasoning models.
 - [2025/5] [MARTI](https://github.com/TsinghuaC3I/MARTI) has been released as a fork of OpenRLHF. It is designed to train LLM-based multi-agent systems using RL, by integrating centralized multi-agent interactions with distributed policy training.
@@ -56,31 +66,30 @@ More details are in [Slides](https://docs.google.com/presentation/d/1JRhB1d7csof
 - [2025/1] HKUST reproduced the [DeepSeek-R1-Zero and DeepSeek-R1 training on small models using OpenRLHF](https://github.com/hkust-nlp/simpleRL-reason)
 - [2024/12] We "proposed" 😊 the [REINFORCE++: A Simple and Efficient Approach for Aligning Large Language Models](https://www.researchgate.net/publication/387487679_REINFORCE_An_Efficient_RLHF_Algorithm_with_Robustnessto_Both_Prompt_and_Reward_Models).
 - [2024/12] We analyzed the PPO, REINFORCE++, GRPO and RLOO in the [Notion Blogpost](https://hijkzzz.notion.site/unraveling-rlhf-and-its-variants-engineering-insights#147d9a33ecc9806090f3d5c749d31f05).
-- [2023/8] OpenRLHF was open-sourced. 
-
+- [2023/8] OpenRLHF was open-sourced.
 
 ## Features
 
-- Distributed [PPO](./examples/scripts/train_ppo_llama_ray.sh) and [REINFORCE++/REINFORCE++-baseline/GRPO/RLOO](./examples/scripts/train_reinforce_llama_ray_hybrid_engine.sh) implementations based on Ray.  
-- Support Ray-based [PPO](./examples/scripts/train_ppo_llama_ray_hybrid_engine.sh) and [REINFORCE++/REINFORCE++-baseline/GRPO/RLOO](./examples/scripts/train_reinforce_llama_ray_hybrid_engine.sh) using Hybrid Engine  (`--colocate_all_models`, `--vllm_enable_sleep` and `--vllm_gpu_memory_utilization 0.5`)
+- Distributed [PPO](./examples/scripts/train_ppo_llama_ray.sh) and [REINFORCE++/REINFORCE++-baseline/GRPO/RLOO](./examples/scripts/train_reinforce_llama_ray_hybrid_engine.sh) implementations based on Ray.
+- Support Ray-based [PPO](./examples/scripts/train_ppo_llama_ray_hybrid_engine.sh) and [REINFORCE++/REINFORCE++-baseline/GRPO/RLOO](./examples/scripts/train_reinforce_llama_ray_hybrid_engine.sh) using Hybrid Engine (`--colocate_all_models`, `--vllm_enable_sleep` and `--vllm_gpu_memory_utilization 0.5`)
 - [Ray-based Reinforced Finetuning](./examples/scripts/train_ppo_llama_with_reward_fn.sh)
-- Integration with vLLM for accelerated generation in RLHF tasks (`--vllm_num_engines`).  
+- Integration with vLLM for accelerated generation in RLHF tasks (`--vllm_num_engines`).
 - Support RL Dynamic Sampling from DAPO(`--dynamic_filtering` and `--dynamic_filtering_reward_range`)
 - Support [DeepSpeed AutoTP training](./examples/scripts/train_sft_llama_tensor_parallelism.sh) (`--ds_tensor_parallel_size`)
-- Implementation of [RingAttention](./examples/scripts/train_dpo_ring_llama.sh) (`--ring_attn_size`, `--ring_head_stride`).  
-- Implementation of [DPO (Direct Preference Optimization)/IPO/cDPO](./examples/scripts/train_dpo_llama.sh) and [Kahneman-Tversky Optimization (KTO)](./examples/scripts/train_kto_llama.sh).  
-- Support for [Iterative DPO](./examples/scripts/train_iterative_dpo_llama.sh) ([GitHub: Online-RLHF](https://github.com/RLHFlow/Online-RLHF)).  
-- Support for [Rejection Sampling](./examples/scripts/train_rejection_sampling_llama.sh).  
-- Implementation of [Conditional SFT](./examples/scripts/train_conditional_llama.sh) ([arXiv:2308.12050](https://arxiv.org/abs/2308.12050)).  
-- Support for [Knowledge Distillation](./examples/scripts/train_knowledge_distillation.sh) ([Microsoft: minillm](https://github.com/microsoft/LMOps/tree/main/minillm)).  
-- Integration of [Process Reward Model (PRM)](./examples/scripts/train_prm_mistral.sh).  
-- Packing of training samples for SFT, DPO, RM, PRM, and PPO (`--packing_samples`).  
-- Support for [Mixture of Experts (MoE)](./examples/test_scripts/train_sft_mixtral_lora.sh) (`--aux_loss_coef`).  
-- Integration of FlashAttention (`--attn_implementation`).  
-- Support for QLoRA (`--load_in_4bit`) and [LoRA](./examples/scripts/train_sft_mixtral_lora.sh) (`--lora_rank`, `--target_modules`).  
-- Compatibility with HuggingFace's `tokenizer.apply_chat_template` for datasets (`--apply_chat_template` and `--input_key`).  
-- Logging support with Wandb (`--use_wandb`) and TensorBoard (`--use_tensorboard`).  
-- Checkpoint recovery functionality (`--load_checkpoint` and `--save_steps`).  
+- Implementation of [RingAttention](./examples/scripts/train_dpo_ring_llama.sh) (`--ring_attn_size`, `--ring_head_stride`).
+- Implementation of [DPO (Direct Preference Optimization)/IPO/cDPO](./examples/scripts/train_dpo_llama.sh) and [Kahneman-Tversky Optimization (KTO)](./examples/scripts/train_kto_llama.sh).
+- Support for [Iterative DPO](./examples/scripts/train_iterative_dpo_llama.sh) ([GitHub: Online-RLHF](https://github.com/RLHFlow/Online-RLHF)).
+- Support for [Rejection Sampling](./examples/scripts/train_rejection_sampling_llama.sh).
+- Implementation of [Conditional SFT](./examples/scripts/train_conditional_llama.sh) ([arXiv:2308.12050](https://arxiv.org/abs/2308.12050)).
+- Support for [Knowledge Distillation](./examples/scripts/train_knowledge_distillation.sh) ([Microsoft: minillm](https://github.com/microsoft/LMOps/tree/main/minillm)).
+- Integration of [Process Reward Model (PRM)](./examples/scripts/train_prm_mistral.sh).
+- Packing of training samples for SFT, DPO, RM, PRM, and PPO (`--packing_samples`).
+- Support for [Mixture of Experts (MoE)](./examples/test_scripts/train_sft_mixtral_lora.sh) (`--aux_loss_coef`).
+- Integration of FlashAttention (`--attn_implementation`).
+- Support for QLoRA (`--load_in_4bit`) and [LoRA](./examples/scripts/train_sft_mixtral_lora.sh) (`--lora_rank`, `--target_modules`).
+- Compatibility with HuggingFace's `tokenizer.apply_chat_template` for datasets (`--apply_chat_template` and `--input_key`).
+- Logging support with Wandb (`--use_wandb`) and TensorBoard (`--use_tensorboard`).
+- Checkpoint recovery functionality (`--load_checkpoint` and `--save_steps`).
 - Provided multi-node training scripts, such as [DPO](./examples/scripts/train_llama_slurm.sh) and [Ray PPO](./examples/scripts/train_ppo_llama_ray_slurm.sh).
 
 ## Quick Start
@@ -114,10 +123,11 @@ pip install -e .
 ```
 
 > [!NOTE]
->We recommend using vLLM 0.10.1 or higher.
->We also provided the [Dockerfiles for vLLM](./dockerfile/) and [One-Click Installation Script of Nvidia-Docker](./examples/scripts/nvidia_docker_install.sh).
+> We recommend using vLLM 0.10.1 or higher.
+> We also provided the [Dockerfiles for vLLM](./dockerfile/) and [One-Click Installation Script of Nvidia-Docker](./examples/scripts/nvidia_docker_install.sh).
 
 ### Prepare Datasets
+
 OpenRLHF provides multiple data processing methods in our dataset classes.
 Such as in the [Prompt Dataset](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/datasets/prompts_dataset.py#L6):
 
@@ -155,11 +165,10 @@ tokenizer.apply_chat_template(dataset[0]["input_key"], tokenize=False)
 
 How to specify test datasets ?
 
-Please set test datasets path using ``--eval_dataset {name or path}``.
-
+Please set test datasets path using `--eval_dataset {name or path}`.
 
 > [!NOTE]
-> The ``JSON key`` options depends on the specific datasets. See [Reward Dataset](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/datasets/reward_dataset.py#L10) and [SFT Dataset](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/datasets/sft_dataset.py#L9)
+> The `JSON key` options depends on the specific datasets. See [Reward Dataset](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/datasets/reward_dataset.py#L10) and [SFT Dataset](https://github.com/OpenRLHF/OpenRLHF/blob/main/openrlhf/datasets/sft_dataset.py#L9)
 
 ### Supervised Fine-tuning
 
@@ -167,7 +176,7 @@ OpenRLHF's model checkpoint is fully compatible with HuggingFace models. You can
 
 Then you can use the startup scripts we provide in the [examples/scripts](./examples/scripts/) directory, or start the training using the following commands.
 
-```bash 
+```bash
 deepspeed --module openrlhf.cli.train_sft \
    --max_len 4096 \
    --dataset Open-Orca/OpenOrca \
@@ -191,7 +200,7 @@ deepspeed --module openrlhf.cli.train_sft \
    --use_wandb {wandb_token}
 
 # Support HF tokenizer.apply_chat_template
-# --apply_chat_template 
+# --apply_chat_template
 # --tokenizer_chat_template {HF Chat Template}
 
 # Support RingAttention
@@ -209,8 +218,8 @@ deepspeed --module openrlhf.cli.train_sft \
 > [!NOTE]
 > OpenRLHF SFT/DPO/RewardModel/PPO trainers support `--packing_samples` [based on `flash_attention`](https://github.com/MeetKai/functionary/tree/main/functionary/train/packing)
 
-
 ### Reward Model Training
+
 ```bash
 deepspeed --module openrlhf.cli.train_rm \
    --save_path ./checkpoint/llama3-8b-rm \
@@ -318,23 +327,25 @@ ray job submit --address="http://127.0.0.1:8265" \
 # Support N samples
 # --n_samples_per_prompt 4
 ```
+
 > [!NOTE]
-> You can also use ``setup_commands`` to let Ray automatically deploy the environment, such as `--runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"]}'`.
+> You can also use `setup_commands` to let Ray automatically deploy the environment, such as `--runtime-env-json='{"setup_commands": ["pip install openrlhf[vllm]"]}'`.
 
 > [!NOTE]
 > RLOO and REINFORCE++-baseline in OPENRLHF are a modification based on REINFORCE++:
+>
 > - REINFORCE++ integrates key optimization techniques from PPO (such as advantage normalization and PPO-clip loss) into REINFORCE while eliminating the need for a critic network.
 > - REINFORCE++-baseline uses the `mean reward of multiple samples from the same prompt` as the baseline to reshape the rewards, therefore, under the RLVR setting, the algorithm insensitive to reward patterns such as 0 (incorrect) / 1 (correct) / -0.5 (format reward) or -1 (incorrect) / 1 (correct) / -0.5 (format reward).
 > - RLOO in OpenRLHF modifies the original version by incorporating the `per-token KL reward` and utilizing the `PPO-clip loss`.
 > - Dr. GRPO remove the local group normalization `/std` in GRPO.
 
-
 > [!NOTE]
 > If you you encounter an error related to index out of range when deepspeed sets up the GPU devices, you can try to set the environment variable [`RAY_EXPERIMENTAL_NOSET_*_VISIBLE_DEVICES`](openrlhf/trainer/ray/utils.py) as a workaround.
->   ```bash
->   # For NVIDIA GPUs:
->   export RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES=1
->   ```
+>
+> ```bash
+> # For NVIDIA GPUs:
+> export RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES=1
+> ```
 
 The launch scripts and documents for supported algorithms are in [example/scripts](./examples/scripts/) and [Documents - Usage](https://openrlhf.readthedocs.io/en/latest/usage.html)
 
@@ -364,7 +375,7 @@ def reward_func(queries, prompts, labels):
 
 then just set
 
-```shell 
+```shell
 ray job submit --address="http://127.0.0.1:8265" \
   --runtime-env-json='{"working_dir": "/openrlhf"}' \
   -- python3 -m openrlhf.cli.train_ppo_ray \
@@ -377,7 +388,7 @@ where the `label_key` parameter is used to pass additional sample information su
 
 ## Async RLHF & Agent RLHF
 
-OpenRLHF provides comprehensive support for both Asynchronous RLHF and Agent-based RLHF implementations. To utilize these features, simply include the `--async_train` and `--agent_func_path` parameters in your training configuration. 
+OpenRLHF provides comprehensive support for both Asynchronous RLHF and Agent-based RLHF implementations. To utilize these features, simply include the `--async_train` and `--agent_func_path` parameters in your training configuration.
 
 The Agent API has been redesigned to use a class-based approach with `AgentInstanceBase` and `AgentExecutorBase` classes for better modularity and extensibility.
 
@@ -438,21 +449,20 @@ class AgentExecutor(AgentExecutorBase):
         return await super().execute(prompt, label, sampling_params)
 ```
 
-You can also configure the maximum number of concurrent agents per vLLM engine by setting `export OPENRLHF_ASYNC_NUM_TASKS=128`. 
+You can also configure the maximum number of concurrent agents per vLLM engine by setting `export OPENRLHF_ASYNC_NUM_TASKS=128`.
 Additionally, you can control the degree of off-policy sampling by setting `export OPENRLHF_ASYNC_QUEUE_SIZE=1` (this parameter controls how many batches of data can be stored in the buffer at most) in your environment.
 
 > [!NOTE]
 > By overriding the `execute` function of `AgentExecutorBase`, you can implement completely custom agent running processes. The design follows the **token-in-token-out principle** to ensure consistency between sampling and training samples, avoiding potential mismatches that could occur with text-level processing.
 
-
-
-> [!NOTE] 
+> [!NOTE]
 > OpenRLHF's Agent RLHF also supports Hybrid Engine training. To enable this feature, please remove the `--async_train` flag and enable `--colocate_all_models`.
 
-> [!WARNING] 
+> [!WARNING]
 > Asynchronous training may affect the training stability. It is recommended to prioritize using Hybrid Engine or synchronous training mode.
 
 ### LoRA
+
 If you use `LoRA (Low-Rank Adaptation)`, `OpenRLHF` will not save the full weights by default instead of `LoRA Adapter`. To continue in your task normally, you should combine the `Adapter` with weights of your base model
 
 ```bash
@@ -466,19 +476,18 @@ python -m openrlhf.cli.lora_combiner \
 
 ### Performance Tuning Guide
 
-To achieve optimal performance, we recommend allocating nodes `vLLM:Actor:Critic = 1:1:1`. 
+To achieve optimal performance, we recommend allocating nodes `vLLM:Actor:Critic = 1:1:1`.
 
-- For example, for a 70B model with 48 A100 GPUs, it is advised to allocate 16 A100 GPUs to the vLLM Engine, 16 GPUs to the Actor model, and the remaining 16 GPUs to the Critic model. 
+- For example, for a 70B model with 48 A100 GPUs, it is advised to allocate 16 A100 GPUs to the vLLM Engine, 16 GPUs to the Actor model, and the remaining 16 GPUs to the Critic model.
 - Enable asynchronous training `--async_train` when the convergence of the RL algorithm meets requirements.
 - Using hybrid engine `--colocate_all_models` and `--vllm_enable_sleep` and `--deepspeed_enable_sleep` rather than distributed RLHF when there are enough GPU memory.
-- Enable the `--colocate_critic_reward`, `--colocate_actor_ref` options to merge nodes.  
+- Enable the `--colocate_critic_reward`, `--colocate_actor_ref` options to merge nodes.
 - You should increase the `rollout_micro_batch_size` (and minimize the TP size of vLLM engine) as much as possible. During the training phase, a larger `--micro_train_batch_size` is better and enable `--packing_samples`.
-- When there are enough GPU memory, please disable `--adam_offload` and enable `--overlap_comm`.  Also enable ``--deepcompile`` to speed up the training.
+- When there are enough GPU memory, please disable `--adam_offload` and enable `--overlap_comm`. Also enable `--deepcompile` to speed up the training.
 - For vLLM, please use `--vllm_sync_backend nccl`
-- Enable ``--use_dynamic_batch`` to accelerate the deepspeed training and forward.
+- Enable `--use_dynamic_batch` to accelerate the deepspeed training and forward.
 - Enable [enable_prefix_caching](https://docs.vllm.ai/en/stable/automatic_prefix_caching/apc.html) in vLLM generation when `n_samples_per_prompts` > 1.
 - For a large base model, if an OOM occurs, do not use any `--colocate_xxxx` options.
-
 
 ## Companies and Organizations using OpenRLHF
 
@@ -540,13 +549,15 @@ We would like to express our gratitude to the following projects and organizatio
 - [DeepSpeed ↗](https://github.com/microsoft/DeepSpeed)
 - [Ray ↗](https://github.com/ray-project/ray)
 
-Our project would also like to thank [ColossalChat](https://github.com/hpcaitech/ColossalAI/tree/main/applications/ColossalChat) and [DeepSpeedChat](https://github.com/microsoft/DeepSpeedExamples/tree/master/applications/DeepSpeed-Chat). In the early stages of the project, we referred to their code design. 
+Our project would also like to thank [ColossalChat](https://github.com/hpcaitech/ColossalAI/tree/main/applications/ColossalChat) and [DeepSpeedChat](https://github.com/microsoft/DeepSpeedExamples/tree/master/applications/DeepSpeed-Chat). In the early stages of the project, we referred to their code design.
 Our project would like to thank [Netmind.AI](https://www.netmind.ai/) for the GPU support of developing ring attention.
 
 (2024/7) Our GitHub organization has changed from OpenLLMAI to OpenRLHF.
 
 ## Citation
+
 OpenRLHF
+
 ```
 @article{hu2024openrlhf,
   title={OpenRLHF: An Easy-to-use, Scalable and High-performance RLHF Framework},
@@ -555,7 +566,9 @@ OpenRLHF
   year={2024}
 }
 ```
+
 REINFORCE++-baseline
+
 ```
 @article{hu2025reinforce++,
   title={Reinforce++: A simple and efficient approach for aligning large language models},
@@ -565,6 +578,6 @@ REINFORCE++-baseline
 }
 ```
 
-______________________________________________________________________
+---
 
-*OpenRLHF © 2025 OpenRLHF. All Rights Reserved.*
+_OpenRLHF © 2025 OpenRLHF. All Rights Reserved._

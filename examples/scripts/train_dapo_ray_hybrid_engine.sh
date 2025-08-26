@@ -1,5 +1,7 @@
 set -x
 
+source .venv/bin/activate
+
 python3 -m openrlhf.cli.train_ppo_ray \
    --ref_num_nodes 1 \
    --ref_num_gpus_per_node 8 \
@@ -18,9 +20,9 @@ python3 -m openrlhf.cli.train_ppo_ray \
    --dynamic_filtering_reward_range 0 1 \
    --eps_clip_low_high 0.2 0.3 \
    --pretrain OpenRLHF/Llama-3-8b-sft-mixture \
-   --remote_rm_url /openrlhf/examples/python/reward_func.py \
-   --save_path /openrlhf/examples/test_scripts/final/llama3-8b-rlhf \
-   --ckpt_path /openrlhf/examples/test_scripts/ckpt/llama3-8b-rlhf \
+   --remote_rm_url /data/users/alan/OpenRLHF/examples/python/reward_func.py \
+   --save_path /data/users/alan/OpenRLHF/examples/test_scripts/final/llama3-8b-rlhf \
+   --ckpt_path /data/users/alan/OpenRLHF/examples/test_scripts/ckpt/llama3-8b-rlhf \
    --save_steps 20 \
    --save_hf_ckpt \
    --micro_train_batch_size 8 \
@@ -43,7 +45,8 @@ python3 -m openrlhf.cli.train_ppo_ray \
    --vllm_sync_backend nccl \
    --enforce_eager \
    --vllm_enable_sleep \
-   --deepspeed_enable_sleep
+   --deepspeed_enable_sleep \
+   --use_wandb 5fb2c3eb35cb3bc0124a02069ce91eedc6570e5a
 
 # You could also try
 #   --kl_estimator k2 \
